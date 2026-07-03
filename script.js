@@ -167,17 +167,20 @@
   /* ========================================
      Chat Widget
      ======================================== */
-  const chatFloat = document.getElementById('chatFloat');
+  const navChat = document.getElementById('navChat');
   const chatWindow = document.getElementById('chatWindow');
   const chatClose = document.getElementById('chatClose');
   const chatMessages = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput');
   const chatSend = document.getElementById('chatSend');
+  const chatFileInput = document.getElementById('chatFileInput');
+  const chatAttach = document.getElementById('chatAttach');
   const nicknameModal = document.getElementById('nicknameModal');
   const nicknameInput = document.getElementById('nicknameInput');
   const nicknameSubmit = document.getElementById('nicknameSubmit');
 
   var nickname = localStorage.getItem('test168_chat_nickname') || '';
+  var customerId = localStorage.getItem('test168_chat_customer_id') || '';
   var chatOpen = false;
   var pollTimer = null;
   var lastMessageId = 0;
@@ -230,10 +233,19 @@
   function addMessage(name, message, isSelf) {
     var div = document.createElement('div');
     div.className = 'chat-msg ' + (isSelf ? 'self' : 'admin');
-    div.innerHTML = '<strong>' + escapeHtml(name) + '</strong>: ' + escapeHtml(message) +
+    div.innerHTML = '<strong>' + escapeHtml(name) + '</strong>: ' + renderMessageContent(message) +
       '<span class="msg-time">' + formatTime() + '</span>';
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function renderMessageContent(text) {
+    var escaped = escapeHtml(text);
+    // Replace image markdown ![](url)
+    escaped = escaped.replace(/!\[\]\(([^)]+)\)/g, '<img src="$1" class="chat-msg-img" loading="lazy">');
+    // Replace file markdown [name](url)
+    escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$1" class="chat-file-link" target="_blank">$1</a>');
+    return escaped;
   }
 
   function escapeHtml(text) {
@@ -242,19 +254,25 @@
   }
 
   function fetchMessages() {
-    fetch('https://test168.onrender.com/api/chat/messages')
+    var url = API_BASE + '/api/chat/messages';
+    if (customerId) {
+      url += '?customer_id=' + encodeURIComponent(customerId);
+    } else if (nickname) {
+      url += '?name=' + encodeURIComponent(nickname);
+    }
+    fetch(url)
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var messages = data.messages || data || [];
+        var messages = Array.isArray(data) ? data : (data.messages || []);
         var newMsgs = false;
         messages.forEach(function (msg) {
           var msgId = msg.id || 0;
           if (msgId > lastMessageId) {
             lastMessageId = msgId;
-            var name = msg.name || 'Anonymous';
+            var senderName = msg.sender_type === 'admin' ? (msg.customer_name || 'Admin') : (msg.customer_name || nickname || 'You');
             var text = msg.message || '';
-            var isSelf = (name === nickname);
-            addMessage(name, text, isSelf);
+            var isSelf = msg.sender_type !== 'admin';
+            addMessage(senderName, text, isSelf);
             newMsgs = true;
           }
         });
@@ -272,18 +290,63 @@
     addMessage(nickname, text, true);
     chatInput.value = '';
 
-    fetch('https://test168.onrender.com/api/chat/messages', {
+    fetch(API_BASE + '/api/chat/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: nickname, message: text })
-    }).catch(function () { /* silent */ });
+    }).then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.customer_id) {
+          customerId = String(data.customer_id);
+          localStorage.setItem('test168_chat_customer_id', customerId);
+        }
+      }).catch(function () { /* silent */ });
 
     // Refresh after sending
     setTimeout(fetchMessages, 1000);
   }
 
-  if (chatFloat) {
-    chatFloat.addEventListener('click', toggleChat);
+  // File upload for chat
+  if (chatAttach) {
+    chatAttach.addEventListener('click', function () {
+      chatFileInput.click();
+    });
+  }
+
+  if (chatFileInput) {
+    chatFileInput.addEventListener('change', function () {
+      var file = chatFileInput.files[0];
+      if (!file) return;
+      if (!nickname) {
+        toggleChat();
+        chatFileInput.value = '';
+        return;
+      }
+      var formData = new FormData();
+      formData.append('name', nickname);
+      formData.append('file', file);
+
+      fetch(API_BASE + '/api/chat/upload', {
+        method: 'POST',
+        body: formData
+      }).then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.customer_id) {
+            customerId = String(data.customer_id);
+            localStorage.setItem('test168_chat_customer_id', customerId);
+          }
+          setTimeout(fetchMessages, 500);
+        }).catch(function () { /* silent */ });
+
+      chatFileInput.value = '';
+    });
+  }
+
+  if (navChat) {
+    navChat.addEventListener('click', function (e) {
+      e.preventDefault();
+      toggleChat();
+    });
   }
 
   if (chatClose) {

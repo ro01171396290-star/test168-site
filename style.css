@@ -646,32 +646,6 @@ img {
 }
 
 /* ---------- Chat Widget ---------- */
-.chat-float {
-  position: fixed;
-  bottom: 100px;
-  right: 28px;
-  z-index: 999;
-  width: 56px;
-  height: 56px;
-  background: #00e5ff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
-  transition: all 0.3s ease;
-  color: #0a0a0a;
-  line-height: 1;
-}
-
-.chat-float:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 30px rgba(0, 229, 255, 0.7);
-}
-
 .chat-window {
   display: none;
   position: fixed;
@@ -818,6 +792,11 @@ img {
   background: #ffd700;
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
 }
+
+.chat-attach{background:none;border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:rgba(255,255,255,0.6);cursor:pointer;font-size:16px;padding:8px;transition:all .15s;margin:0 4px}
+.chat-attach:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.5);color:#fff}
+.chat-msg-img{max-width:200px;max-height:200px;border-radius:6px;display:block;margin-top:4px}
+.chat-file-link{display:inline-block;margin-top:4px;color:#ffd700;text-decoration:underline;font-size:12px}
 
 /* ---------- Modal (Register & Nickname) ---------- */
 .modal-overlay {

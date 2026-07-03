@@ -22,6 +22,7 @@
         <li><a href="#tabs" class="nav-link">4D</a></li>
         <li><a href="#" class="nav-link">Luck Spin</a></li>
         <li><a href="#promotion" class="nav-link">Promotion</a></li>
+        <li><a href="#" class="nav-link" id="navChat">Chat</a></li>
       </ul>
       <div class="nav-actions">
         <a href="/login" class="btn btn-outline btn-sm">Login</a>
@@ -357,7 +358,6 @@
   </div>
 
   <!-- ====== 9. Chat Widget ====== -->
-  <button class="chat-float" id="chatFloat" aria-label="Chat">💬</button>
 
   <div class="chat-window" id="chatWindow">
     <div class="chat-header">
@@ -367,6 +367,8 @@
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-area">
       <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+      <input type="file" id="chatFileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
+      <button class="chat-attach" id="chatAttach" title="Attach file">📎</button>
       <button class="chat-send" id="chatSend">Send</button>
     </div>
   </div>
