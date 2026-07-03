@@ -244,9 +244,15 @@
   function renderMessageContent(text) {
     var escaped = escapeHtml(text);
     // Replace image markdown ![](url)
-    escaped = escaped.replace(/!\[\]\(([^)]+)\)/g, '<img src="$1" class="chat-msg-img" loading="lazy">');
+    escaped = escaped.replace(/!\[\]\(([^)]+)\)/g, function(m, url) {
+      var full = (url.indexOf('/uploads/') === 0) ? API_BASE + url : url;
+      return '<img src="' + full + '" class="chat-msg-img" loading="lazy">';
+    });
     // Replace file markdown [name](url)
-    escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$1" class="chat-file-link" target="_blank">$1</a>');
+    escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(m, name, url) {
+      var full = (url.indexOf('/uploads/') === 0) ? API_BASE + url : url;
+      return '<a href="' + full + '" class="chat-file-link" target="_blank">' + name + '</a>';
+    });
     return escaped;
   }
 
