@@ -5,6 +5,8 @@
 (function () {
   'use strict';
 
+  var API_BASE = 'https://test168.onrender.com';
+
   /* ---------- Tab Switching ---------- */
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');

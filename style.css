@@ -650,7 +650,7 @@ img {
   display: none;
   position: fixed;
   bottom: 100px;
-  right: 100px;
+  right: 28px;
   z-index: 1000;
   width: 350px;
   height: 450px;
