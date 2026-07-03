@@ -1006,4 +1006,12 @@ img {
     bottom: 20px;
     right: 16px;
   }
+
+  .chat-window {
+    width: calc(100vw - 32px);
+    max-width: 350px;
+    right: 16px;
+    bottom: 84px;
+    height: 380px;
+  }
 }

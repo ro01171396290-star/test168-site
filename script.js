@@ -277,7 +277,7 @@
           var msgId = msg.id || 0;
           if (msgId > lastMessageId) {
             lastMessageId = msgId;
-            var senderName = msg.sender_type === 'admin' ? (msg.customer_name || 'Admin') : (msg.customer_name || nickname || 'You');
+            var senderName = msg.sender_type === 'admin' ? 'Support' : (msg.customer_name || nickname || 'You');
             var text = msg.message || '';
             var isSelf = msg.sender_type !== 'admin';
             addMessage(senderName, text, isSelf);
@@ -291,10 +291,14 @@
       .catch(function () { /* silent */ });
   }
 
+  var isSending = false;
+
   function sendMessage() {
+    if (isSending) return;
     var text = chatInput.value.trim();
     if (!text || !nickname) return;
 
+    isSending = true;
     addMessage(nickname, text, true);
     chatInput.value = '';
 
@@ -308,7 +312,12 @@
           customerId = String(data.customer_id);
           localStorage.setItem('test168_chat_customer_id', customerId);
         }
-      }).catch(function () { /* silent */ });
+        // Track sent message ID to prevent fetchMessages from duplicating it
+        if (data.id) {
+          lastMessageId = data.id;
+        }
+      }).catch(function () { /* silent */ })
+      .finally(function () { isSending = false; });
 
     // Refresh after sending
     setTimeout(fetchMessages, 1000);
