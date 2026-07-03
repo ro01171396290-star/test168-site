@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: test168-site
-    env: node
-    plan: free
-    buildCommand: npm install
-    startCommand: node server.js
