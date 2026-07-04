@@ -100,6 +100,7 @@
   const registerModalClose = document.getElementById('registerModalClose');
   const registerForm = document.getElementById('registerForm');
   const registerStatus = document.getElementById('registerStatus');
+  const regNameInput = document.getElementById('regName');
 
   function openRegisterModal() {
     registerModal.classList.add('open');
@@ -129,12 +130,23 @@
   }
 
   if (registerForm) {
+    // Auto uppercase name
+    if (regNameInput) {
+      regNameInput.addEventListener('input', function() {
+        var start = this.selectionStart;
+        var end = this.selectionEnd;
+        this.value = this.value.toUpperCase();
+        this.setSelectionRange(start, end);
+      });
+    }
+
     registerForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = document.getElementById('regName').value.trim();
+      var name = document.getElementById('regName').value.trim().toUpperCase();
       var mobile = document.getElementById('regMobile').value.trim();
       var email = document.getElementById('regEmail').value.trim();
       var password = document.getElementById('regPassword').value;
+      var birthday = document.getElementById('regBirthday').value;
 
       if (!name || !mobile || !email || !password) {
         registerStatus.textContent = 'Please fill in all fields.';
@@ -148,7 +160,7 @@
       fetch('https://test168.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, mobile: mobile, email: email, password: password })
+        body: JSON.stringify({ name: name, mobile: mobile, email: email, password: password, birthday: birthday || undefined })
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
@@ -227,9 +239,8 @@
 
   function formatTime() {
     var d = new Date();
-    var h = d.getHours();
-    var m = d.getMinutes();
-    return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+    var parts = d.toLocaleString('en-US', { timeZone: 'Asia/Kuala_Lumpur', hour: '2-digit', minute: '2-digit', hour12: false });
+    return parts;
   }
 
   function addMessage(name, message, isSelf) {
@@ -409,6 +420,14 @@
         nicknameModal.classList.remove('open');
         chatOpen = false;
       }
+    });
+  }
+
+  // Live Chat float button
+  var chatFloat = document.getElementById('chatFloat');
+  if (chatFloat) {
+    chatFloat.addEventListener('click', function () {
+      toggleChat();
     });
   }
 

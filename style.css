@@ -623,6 +623,30 @@ img {
   color: #00e5ff;
 }
 
+/* ---------- Live Chat Float ---------- */
+.chat-float {
+  position: fixed;
+  bottom: 90px;
+  right: 28px;
+  z-index: 999;
+  width: 56px;
+  height: 56px;
+  background: #00e5ff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+}
+
 /* ---------- WhatsApp Float ---------- */
 .whatsapp-float {
   position: fixed;
@@ -1000,9 +1024,16 @@ img {
     justify-content: center;
   }
 
+  .chat-float,
   .whatsapp-float {
     width: 48px;
     height: 48px;
+  }
+  .chat-float {
+    bottom: 76px;
+    right: 16px;
+  }
+  .whatsapp-float {
     bottom: 20px;
     right: 16px;
   }
