@@ -160,7 +160,7 @@
       fetch('https://test168.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, mobile: mobile, email: email, password: password, birthday: birthday || undefined })
+        body: JSON.stringify({ name: name, mobile: mobile, email: email, password: password, birthday: birthday || undefined, source: 'WEBSITE' })
       })
         .then(function (res) { return res.json(); })
         .then(function (data) {
